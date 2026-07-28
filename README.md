@@ -1,0 +1,91 @@
+# Skill Palette
+
+[English](#english) · [简体中文](#简体中文)
+
+![Skill Palette app icon](Resources/SkillPaletteIcon.png)
+
+## 简体中文
+
+**Skill Palette** 是一个轻量的 macOS 工具：当你在 Codex 输入 `#`（也可启用 `@`）时，它会立即弹出本机 Skill 搜索，让你按名称、描述或标签找到 Skill，并将调用文本写回原来的输入框。
+
+> 截图将在后续版本补充。
+
+### 功能
+
+- 在 Codex 输入 `#` 或 `@` 唤起搜索，不必记住完整 Skill 名称。
+- 支持中文关键词、标签与模糊搜索；例如 `PPT`、`飞书`、`图片`、`Excel`。
+- 按本机目录分类浏览 Skills，并支持收藏常用 Skill。
+- 选中后自动插入 `@skill-name` 到原来的 Codex 输入位置。
+- 只读取本机 `~/.codex/skills` 与 `~/.agents/skills` 中的 `SKILL.md`；不会上传你的 Skill 内容或键盘输入。
+- 内置权限引导和诊断页，便于检查辅助功能、输入监控和键盘监听状态。
+
+### 安装
+
+1. 在 [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest) 下载最新版 `Skill-Palette-1.1.0-macos.zip`。
+2. 解压后将 `Skill Palette.app` 拖入“应用程序”或任意本地文件夹。
+3. 首次启动时按引导开启两项 macOS 权限：
+   - **辅助功能**：将选中的 Skill 插回 Codex 输入框。
+   - **输入监控**：监听 `#` 或 `@` 并即时打开搜索。
+4. 回到 Codex，点击输入框后输入 `#`，开始搜索。
+
+### 从源码构建
+
+要求：macOS 13 或更高版本，以及 Xcode Command Line Tools 或 Xcode。
+
+```bash
+./build.sh
+open "build/Skill Palette.app"
+```
+
+### 使用提示
+
+- 默认触发符为 `#`，避免与 Codex 原生的 `@` 菜单冲突。
+- `Esc` 可关闭搜索浮窗。
+- 默认只在应用名称或 Bundle ID 含 `codex` / `chatgpt` 时启用；可在“通用”页调整。
+
+## English
+
+**Skill Palette** is a lightweight macOS utility for calling local Codex Skills. Type `#` in Codex (or optionally `@`) to open a fast local search, find a Skill by name, description, or tag, and insert its invocation back into the original prompt.
+
+> Screenshots will be added in a later update.
+
+### Highlights
+
+- Open local Skill search from Codex with `#` or `@`; no need to remember long Skill names.
+- Search using natural keywords, Chinese tags, and fuzzy matching.
+- Browse Skills by local folder and star frequently used entries.
+- Insert `@skill-name` directly into the original Codex input field.
+- Reads only local `SKILL.md` files from `~/.codex/skills` and `~/.agents/skills`. No Skill content or keystrokes are uploaded.
+- Includes guided macOS permission setup and a diagnostics page for Accessibility, Input Monitoring, and the keyboard listener.
+
+### Install
+
+1. Download `Skill-Palette-1.1.0-macos.zip` from [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest).
+2. Unzip it and move `Skill Palette.app` to Applications or another local folder.
+3. On first launch, grant both macOS permissions:
+   - **Accessibility** — inserts the selected Skill into Codex.
+   - **Input Monitoring** — listens for `#` or `@` to open search.
+4. Return to Codex, focus the composer, and type `#`.
+
+### Build from source
+
+Requires macOS 13 or later and Xcode Command Line Tools or Xcode.
+
+```bash
+./build.sh
+open "build/Skill Palette.app"
+```
+
+### Tips
+
+- `#` is the default trigger to avoid conflicting with Codex's native `@` menu.
+- Press `Esc` to dismiss the search palette.
+- By default, the trigger is limited to apps whose name or bundle identifier includes `codex` or `chatgpt`. You can change that in General settings.
+
+## Privacy
+
+Skill Palette works locally. It does not send your Skills, search terms, or keystrokes to a server.
+
+## License
+
+Copyright © 2026 Jiang Jiawei. All rights reserved.
