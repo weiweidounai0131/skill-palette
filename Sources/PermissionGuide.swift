@@ -148,7 +148,7 @@ private struct PermissionGuideView: View {
                 PermissionRequirementRow(
                     symbol: "keyboard",
                     title: "输入监控",
-                    description: "监听 # 或 @，即时打开 Skill 搜索",
+                    description: "监听设定的触发字符，即时打开 Skill 搜索",
                     isGranted: status.inputMonitoringGranted,
                     openSettings: RuntimeStatus.shared.requestInputMonitoring
                 )

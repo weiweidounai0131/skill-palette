@@ -41,7 +41,11 @@ final class InputInterceptor {
                     // its editor tree. Keep that work out of the event-tap
                     // callback so typing # never stalls the input pipeline.
                     let target = FocusedElement.current()
-                    PickerController.shared.open(targetElement: target, targetApplication: application)
+                    PickerController.shared.open(
+                        targetElement: target,
+                        targetApplication: application,
+                        triggerCharacter: character
+                    )
                 }
                 return nil
             },

@@ -7,6 +7,7 @@ final class PickerController: NSWindowController, NSWindowDelegate {
 
     private var targetElement: AXUIElement?
     private var targetApplication: NSRunningApplication?
+    private var triggerCharacter = ""
     private let pickerState = PickerState()
     private var keyMonitor: Any?
 
@@ -30,9 +31,15 @@ final class PickerController: NSWindowController, NSWindowDelegate {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    func open(targetElement: AXUIElement?, targetApplication: NSRunningApplication?) {
+    func open(
+        targetElement: AXUIElement?,
+        targetApplication: NSRunningApplication?,
+        triggerCharacter: String
+    ) {
         self.targetElement = targetElement
         self.targetApplication = targetApplication
+        self.triggerCharacter = triggerCharacter
+        pickerState.triggerCharacter = triggerCharacter
         pickerState.query = ""
         pickerState.selection = 0
         pickerState.scope = SkillIndex.shared.availableScopes().contains(.favorites) ? .favorites : .all
@@ -84,13 +91,23 @@ final class PickerController: NSWindowController, NSWindowDelegate {
     }
 
     private func cancel() {
+        let target = targetElement
         let application = targetApplication
+        let trigger = triggerCharacter
         closePicker()
-        // Cancelling only dismisses this temporary panel. The menu-bar app
-        // stays alive and focus returns to the original editor.
-        DispatchQueue.main.async {
+        // The trigger key was intercepted in order to open the picker. Escape
+        // means the user chose not to search, so restore that exact character
+        // to the original Codex editor instead of silently discarding it.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
             application?.activate(options: [.activateIgnoringOtherApps])
+            if !TextInsertion.insert(trigger, into: target) {
+                TextInsertion.paste(trigger, into: application)
+            }
         }
+    }
+
+    private func dismissWithoutRestoringTrigger() {
+        closePicker()
     }
 
     private func closePicker() {
@@ -102,11 +119,11 @@ final class PickerController: NSWindowController, NSWindowDelegate {
     }
 
     func windowDidResignKey(_ notification: Notification) {
-        // A click outside the panel should behave like Escape. Defer one turn
-        // so controls that are opening their own menus keep working normally.
+        // Clicking outside only dismisses the temporary panel. Unlike Escape,
+        // it must not take focus back from the app the user just clicked.
         DispatchQueue.main.async { [weak self] in
             guard let self, self.window?.isVisible == true, self.window?.isKeyWindow == false else { return }
-            self.closePicker()
+            self.dismissWithoutRestoringTrigger()
         }
     }
 
@@ -146,6 +163,7 @@ final class PickerState: ObservableObject {
     @Published var query = ""
     @Published var selection = 0
     @Published var scope: SkillScope = .all
+    @Published var triggerCharacter = "#"
 }
 
 struct SkillPickerView: View {
@@ -168,7 +186,7 @@ struct SkillPickerView: View {
                     .textFieldStyle(.plain)
                     .focused($searchFocused)
                     .onChange(of: state.query) { _ in state.selection = 0 }
-                Text("Esc 取消")
+                Text("Esc 取消并保留 \(state.triggerCharacter)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

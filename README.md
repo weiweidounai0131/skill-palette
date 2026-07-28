@@ -6,11 +6,11 @@
 
 ## 简体中文
 
-**Skill Palette** 是一个轻量的 macOS 工具：当你在 Codex 输入 `#`（也可启用 `@`）时，它会立即弹出本机 Skill 搜索，让你按名称、描述或标签找到 Skill，并将调用文本写回原来的输入框。
+**Skill Palette** 是一个轻量的 macOS 工具：当你在 Codex 输入默认触发字符 `#`（或在设置中改为自己的自定义字符）时，它会立即弹出本机 Skill 搜索，让你按名称、描述或标签找到 Skill，并将调用文本写回原来的输入框。
 
 ### 功能
 
-- 在 Codex 输入 `#` 或 `@` 唤起搜索，不必记住完整 Skill 名称。
+- 在 Codex 输入默认 `#` 或自定义触发字符唤起搜索，不必记住完整 Skill 名称。
 - 支持中文关键词、标签与模糊搜索；例如 `PPT`、`飞书`、`图片`、`Excel`。
 - 按本机目录分类浏览 Skills，并支持收藏常用 Skill。
 - 选中后自动插入 `@skill-name` 到原来的 Codex 输入位置。
@@ -29,11 +29,11 @@
 
 ### 安装
 
-1. 在 [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest) 下载最新版 `Skill-Palette-1.1.3-macos.zip`。
+1. 在 [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest) 下载最新版 `Skill-Palette-1.1.4-macos.zip`。
 2. 解压后将 `Skill Palette.app` 拖入“应用程序”或任意本地文件夹。
 3. 首次启动时按引导开启两项 macOS 权限：
    - **辅助功能**：将选中的 Skill 插回 Codex 输入框。
-   - **输入监控**：监听 `#` 或 `@` 并即时打开搜索。
+   - **输入监控**：监听默认 `#` 或自定义触发字符，并即时打开搜索。
 4. 回到 Codex，点击输入框后输入 `#`，开始搜索。
 
 ### 从源码构建
@@ -48,16 +48,16 @@ open "build.noindex/Skill Palette.app"
 ### 使用提示
 
 - 默认触发符为 `#`，避免与 Codex 原生的 `@` 菜单冲突。
-- `Esc` 可关闭搜索浮窗。
+- 按 `Esc` 取消搜索时，原先输入的触发字符会保留在 Codex 输入框中。
 - 默认只在应用名称或 Bundle ID 含 `codex` / `chatgpt` 时启用；可在“通用”页调整。
 
 ## English
 
-**Skill Palette** is a lightweight macOS utility for calling local Codex Skills. Type `#` in Codex (or optionally `@`) to open a fast local search, find a Skill by name, description, or tag, and insert its invocation back into the original prompt.
+**Skill Palette** is a lightweight macOS utility for calling local Codex Skills. Type the default `#` trigger in Codex, or configure your own trigger character, to open a fast local search and insert an invocation back into the original prompt.
 
 ### Highlights
 
-- Open local Skill search from Codex with `#` or `@`; no need to remember long Skill names.
+- Open local Skill search from Codex with the default `#` or a custom trigger character; no need to remember long Skill names.
 - Search using natural keywords, Chinese tags, and fuzzy matching.
 - Browse Skills by local folder and star frequently used entries.
 - Insert `@skill-name` directly into the original Codex input field.
@@ -76,11 +76,11 @@ open "build.noindex/Skill Palette.app"
 
 ### Install
 
-1. Download `Skill-Palette-1.1.3-macos.zip` from [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest).
+1. Download `Skill-Palette-1.1.4-macos.zip` from [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest).
 2. Unzip it and move `Skill Palette.app` to Applications or another local folder.
 3. On first launch, grant both macOS permissions:
    - **Accessibility** — inserts the selected Skill into Codex.
-   - **Input Monitoring** — listens for `#` or `@` to open search.
+   - **Input Monitoring** — listens for the default `#` or your custom trigger to open search.
 4. Return to Codex, focus the composer, and type `#`.
 
 ### Build from source
@@ -95,7 +95,7 @@ open "build.noindex/Skill Palette.app"
 ### Tips
 
 - `#` is the default trigger to avoid conflicting with Codex's native `@` menu.
-- Press `Esc` to dismiss the search palette.
+- Press `Esc` to dismiss the search palette and keep the trigger character in the Codex composer.
 - By default, the trigger is limited to apps whose name or bundle identifier includes `codex` or `chatgpt`. You can change that in General settings.
 
 ## Privacy

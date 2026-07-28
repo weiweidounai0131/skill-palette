@@ -131,7 +131,7 @@ struct SettingsView: View {
 
                 SettingsToggleRow(
                     title: "仅在 Codex 中启用",
-                    detail: "避免在其他应用输入 # 或 @ 时意外呼出搜索。",
+                    detail: "避免在其他应用输入触发字符时意外呼出搜索。",
                     isOn: $settings.codexOnly
                 )
 
