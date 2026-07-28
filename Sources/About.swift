@@ -5,12 +5,14 @@ import SwiftUI
 final class AboutWindowController: NSWindowController {
     init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 450, height: 470),
+            contentRect: NSRect(x: 0, y: 0, width: 420, height: 430),
             styleMask: [.titled, .closable, .miniaturizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
-        window.title = "关于 Skill Palette"
+        // Match the quiet native "About" windows in macOS utilities: keep
+        // the traffic lights, but leave the titlebar itself unlabelled.
+        window.title = ""
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.isMovableByWindowBackground = true
@@ -38,29 +40,29 @@ private struct AboutSkillPaletteView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Spacer(minLength: 28)
+            Spacer(minLength: 38)
 
             Image(nsImage: AppIcon.current ?? NSImage())
                 .resizable()
                 .interpolation(.high)
-                .frame(width: 126, height: 126)
+                .frame(width: 138, height: 138)
                 .accessibilityHidden(true)
 
             Text("Skill Palette")
-                .font(.system(size: 30, weight: .semibold))
-                .padding(.top, 17)
+                .font(.system(size: 26, weight: .semibold))
+                .padding(.top, 15)
 
-            Text("版本 1.1.1")
-                .font(.system(size: 16))
+            Text("版本 1.1.2")
+                .font(.system(size: 14))
                 .foregroundStyle(.secondary)
-                .padding(.top, 5)
+                .padding(.top, 4)
 
             Text("在 Codex 中搜索并调用本机 Skills。")
-                .font(.system(size: 16))
+                .font(.system(size: 15))
                 .foregroundStyle(.secondary)
-                .padding(.top, 21)
+                .padding(.top, 22)
 
-            HStack(spacing: 28) {
+            HStack(spacing: 24) {
                 Link(destination: repositoryURL) {
                     Text("GitHub")
                 }
@@ -71,18 +73,18 @@ private struct AboutSkillPaletteView: View {
                 }
                 .accessibilityLabel("在 GitHub 查看 Skill Palette 更新")
             }
-            .font(.system(size: 18, weight: .medium))
-            .padding(.top, 24)
+            .font(.system(size: 16, weight: .medium))
+            .padding(.top, 20)
 
-            Spacer(minLength: 30)
+            Spacer(minLength: 24)
 
             Text("Copyright © 2026 Jiang Jiawei. All rights reserved.")
-                .font(.system(size: 12))
+                .font(.system(size: 11))
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)
-                .padding(.bottom, 24)
+                .padding(.bottom, 20)
         }
-        .frame(width: 450, height: 470)
+        .frame(width: 420, height: 430)
         .background(Color(nsColor: .windowBackgroundColor))
         .accessibilityElement(children: .contain)
     }
