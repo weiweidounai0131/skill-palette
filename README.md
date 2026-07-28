@@ -8,8 +8,6 @@
 
 **Skill Palette** 是一个轻量的 macOS 工具：当你在 Codex 输入 `#`（也可启用 `@`）时，它会立即弹出本机 Skill 搜索，让你按名称、描述或标签找到 Skill，并将调用文本写回原来的输入框。
 
-> 截图将在后续版本补充。
-
 ### 功能
 
 - 在 Codex 输入 `#` 或 `@` 唤起搜索，不必记住完整 Skill 名称。
@@ -18,6 +16,16 @@
 - 选中后自动插入 `@skill-name` 到原来的 Codex 输入位置。
 - 只读取本机 `~/.codex/skills` 与 `~/.agents/skills` 中的 `SKILL.md`；不会上传你的 Skill 内容或键盘输入。
 - 内置权限引导和诊断页，便于检查辅助功能、输入监控和键盘监听状态。
+
+### 截图
+
+| 权限引导 | 通用设置 |
+| --- | --- |
+| ![Skill Palette 权限引导](docs/screenshots/permission-guide.png) | ![Skill Palette 通用设置](docs/screenshots/settings-general.png) |
+
+| Skill 管理 | 在 Codex 中选择 Skill |
+| --- | --- |
+| ![Skill Palette Skill 管理](docs/screenshots/settings-skills.png) | ![Skill Palette 在 Codex 中的选择浮窗](docs/screenshots/codex-picker.png) |
 
 ### 安装
 
@@ -47,8 +55,6 @@ open "build.noindex/Skill Palette.app"
 
 **Skill Palette** is a lightweight macOS utility for calling local Codex Skills. Type `#` in Codex (or optionally `@`) to open a fast local search, find a Skill by name, description, or tag, and insert its invocation back into the original prompt.
 
-> Screenshots will be added in a later update.
-
 ### Highlights
 
 - Open local Skill search from Codex with `#` or `@`; no need to remember long Skill names.
@@ -57,6 +63,16 @@ open "build.noindex/Skill Palette.app"
 - Insert `@skill-name` directly into the original Codex input field.
 - Reads only local `SKILL.md` files from `~/.codex/skills` and `~/.agents/skills`. No Skill content or keystrokes are uploaded.
 - Includes guided macOS permission setup and a diagnostics page for Accessibility, Input Monitoring, and the keyboard listener.
+
+### Screenshots
+
+| Permission guidance | General settings |
+| --- | --- |
+| ![Skill Palette permission guidance](docs/screenshots/permission-guide.png) | ![Skill Palette general settings](docs/screenshots/settings-general.png) |
+
+| Skill management | Choosing a Skill in Codex |
+| --- | --- |
+| ![Skill Palette Skill management](docs/screenshots/settings-skills.png) | ![Skill Palette picker in Codex](docs/screenshots/codex-picker.png) |
 
 ### Install
 
