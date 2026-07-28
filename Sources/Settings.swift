@@ -68,6 +68,7 @@ struct SettingsView: View {
     @ObservedObject private var settings = OverlaySettings.shared
     @ObservedObject private var index = SkillIndex.shared
     @ObservedObject private var runtime = RuntimeStatus.shared
+    @ObservedObject private var launchAtLogin = LaunchAtLogin.shared
     @State private var destination: SettingsDestination = .general
     @State private var filter = ""
     @State private var showsAdvancedAppRules = false
@@ -106,6 +107,7 @@ struct SettingsView: View {
         .onChange(of: destination) { value in
             if value == .diagnostics {
                 runtime.refreshPermissions()
+                launchAtLogin.refresh()
             }
         }
     }
@@ -256,6 +258,31 @@ struct SettingsView: View {
                     healthyText: "正在运行",
                     unhealthyText: "未运行"
                 )
+            }
+
+            SettingsGroup(
+                title: "启动",
+                footer: launchAtLogin.needsApproval
+                    ? "macOS 需要你在“系统设置 → 通用 → 登录项”中确认 Skill Palette。"
+                    : "启用后，Skill Palette 会在你登录 Mac 时自动启动。"
+            ) {
+                SettingsToggleRow(
+                    title: "登录时启动",
+                    detail: "下次登录 Mac 时自动启动 Skill Palette。",
+                    isOn: Binding(
+                        get: { launchAtLogin.isEnabled },
+                        set: { launchAtLogin.setEnabled($0) }
+                    )
+                )
+
+                if let message = launchAtLogin.message {
+                    Divider().padding(.horizontal, 16)
+                    Label(message, systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                }
             }
 
             SettingsGroup(title: "最近活动") {

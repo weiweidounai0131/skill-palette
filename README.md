@@ -29,7 +29,7 @@
 
 ### 安装
 
-1. 在 [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest) 下载最新版 `Skill-Palette-1.1.4-macos.zip`。
+1. 在 [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest) 下载最新版 `Skill-Palette-1.1.5-macos.zip`。
 2. 解压后将 `Skill Palette.app` 拖入“应用程序”或任意本地文件夹。
 3. 首次启动时按引导开启两项 macOS 权限：
    - **辅助功能**：将选中的 Skill 插回 Codex 输入框。
@@ -76,7 +76,7 @@ open "build.noindex/Skill Palette.app"
 
 ### Install
 
-1. Download `Skill-Palette-1.1.4-macos.zip` from [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest).
+1. Download `Skill-Palette-1.1.5-macos.zip` from [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest).
 2. Unzip it and move `Skill Palette.app` to Applications or another local folder.
 3. On first launch, grant both macOS permissions:
    - **Accessibility** — inserts the selected Skill into Codex.

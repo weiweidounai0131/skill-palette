@@ -40,6 +40,7 @@ swiftc \
   -framework AppKit \
   -framework SwiftUI \
   -framework ApplicationServices \
+  -framework ServiceManagement \
   -o "$MACOS_DIR/$APP_NAME" \
   Sources/*.swift
 
