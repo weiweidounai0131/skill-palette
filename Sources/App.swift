@@ -13,6 +13,7 @@ enum CodexSkillOverlayApplication {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private let settingsWindow = SettingsWindowController()
+    private let aboutWindow = AboutWindowController()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Keep the menu-bar entry, and also behave like a regular macOS app so
@@ -24,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let icon = AppIcon.current {
             NSApp.applicationIconImage = icon
         }
+        configureApplicationMenu()
         configureStatusItem()
         SkillIndex.shared.rescan()
         // Finish building the panel before the event tap becomes available.
@@ -58,6 +60,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: "重新扫描 Skills", action: #selector(rescan), keyEquivalent: "r")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "检查系统权限", action: #selector(checkPermissions), keyEquivalent: "")
+        menu.addItem(withTitle: "关于 Skill Palette", action: #selector(openAbout), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "退出 Skill Palette", action: #selector(quit), keyEquivalent: "q")
         menu.items.forEach { $0.target = self }
@@ -65,8 +68,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = item
     }
 
+    private func configureApplicationMenu() {
+        let mainMenu = NSMenu()
+        let appMenuItem = NSMenuItem()
+        let appMenu = NSMenu(title: "Skill Palette")
+        appMenu.addItem(withTitle: "关于 Skill Palette", action: #selector(openAbout), keyEquivalent: "")
+        appMenu.addItem(NSMenuItem.separator())
+        appMenu.addItem(withTitle: "设置…", action: #selector(openSettings), keyEquivalent: ",")
+        appMenu.addItem(NSMenuItem.separator())
+        appMenu.addItem(withTitle: "退出 Skill Palette", action: #selector(quit), keyEquivalent: "q")
+        appMenu.items.forEach { $0.target = self }
+        appMenuItem.submenu = appMenu
+        mainMenu.addItem(appMenuItem)
+        NSApp.mainMenu = mainMenu
+    }
+
     @objc private func openSettings() {
         settingsWindow.show()
+    }
+
+    @objc private func openAbout() {
+        aboutWindow.show()
     }
 
     @objc private func rescan() {

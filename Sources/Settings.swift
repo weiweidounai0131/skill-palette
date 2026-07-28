@@ -14,6 +14,10 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.isMovableByWindowBackground = true
+        // The close-to-Dock animation otherwise asks LaunchServices for a
+        // cached icon. Bind the current bundled artwork directly to this
+        // window so the animation always matches the visible app icon.
+        window.miniwindowImage = AppIcon.current
         window.center()
         window.contentView = NSHostingView(rootView: SettingsView())
         super.init(window: window)
@@ -40,7 +44,6 @@ private enum SettingsDestination: String, CaseIterable, Identifiable {
     case general
     case skills
     case diagnostics
-    case about
 
     var id: String { rawValue }
 
@@ -49,7 +52,6 @@ private enum SettingsDestination: String, CaseIterable, Identifiable {
         case .general: "通用"
         case .skills: "Skills"
         case .diagnostics: "权限与诊断"
-        case .about: "关于"
         }
     }
 
@@ -58,7 +60,6 @@ private enum SettingsDestination: String, CaseIterable, Identifiable {
         case .general: "slider.horizontal.3"
         case .skills: "wand.and.stars"
         case .diagnostics: "waveform.path.ecg"
-        case .about: "info.circle"
         }
     }
 }
@@ -91,8 +92,6 @@ struct SettingsView: View {
                         skillsPage
                     case .diagnostics:
                         diagnosticsPage
-                    case .about:
-                        aboutPage
                     }
                 }
                 .frame(maxWidth: 760, alignment: .leading)
@@ -302,10 +301,6 @@ struct SettingsView: View {
         }
     }
 
-    private var aboutPage: some View {
-        AboutSkillPaletteView()
-    }
-
     private func presentDiagnosticFeedback(_ message: String, success: Bool) {
         let feedback = DiagnosticFeedback(message: message, success: success)
         withAnimation(.easeOut(duration: 0.18)) {
@@ -324,61 +319,6 @@ struct SettingsView: View {
         formatter.dateFormat = "HH:mm:ss"
         return formatter
     }()
-}
-
-private struct AboutSkillPaletteView: View {
-    private let repositoryURL = URL(string: "https://github.com/weiweidounai0131/skill-palette")!
-    private let releaseURL = URL(string: "https://github.com/weiweidounai0131/skill-palette/releases/latest")!
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Spacer(minLength: 18)
-
-            Image(nsImage: AppIcon.current ?? NSImage())
-                .resizable()
-                .interpolation(.high)
-                .frame(width: 112, height: 112)
-                .accessibilityHidden(true)
-
-            Text("Skill Palette")
-                .font(.system(size: 28, weight: .semibold))
-                .padding(.top, 16)
-
-            Text("版本 1.1.0")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .padding(.top, 5)
-
-            Text("在 Codex 中搜索并调用本机 Skills。")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .padding(.top, 18)
-
-            HStack(spacing: 22) {
-                Link(destination: repositoryURL) {
-                    Label("GitHub", systemImage: "arrow.up.right.square")
-                }
-                .accessibilityLabel("在 GitHub 打开 Skill Palette 项目")
-
-                Link(destination: releaseURL) {
-                    Label("更新", systemImage: "arrow.down.circle")
-                }
-                .accessibilityLabel("在 GitHub 查看 Skill Palette 更新")
-            }
-            .font(.body.weight(.medium))
-            .padding(.top, 20)
-
-            Spacer(minLength: 28)
-
-            Text("Copyright © 2026 Jiang Jiawei. All rights reserved.")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 22)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .accessibilityElement(children: .contain)
-    }
 }
 
 private struct PreferencesToolbar: View {

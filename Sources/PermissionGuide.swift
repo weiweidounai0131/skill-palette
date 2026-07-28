@@ -29,6 +29,7 @@ final class PermissionGuideController: NSObject, NSWindowDelegate {
         panel.titlebarAppearsTransparent = true
         panel.isMovableByWindowBackground = true
         panel.isReleasedWhenClosed = false
+        panel.miniwindowImage = AppIcon.current
         // Do not let AppKit hide this window on a brief focus change while it
         // is being dragged. System Settings is handled explicitly below.
         panel.hidesOnDeactivate = false
