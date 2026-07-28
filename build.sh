@@ -4,7 +4,10 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 APP_NAME="Skill Palette"
-BUILD_DIR="build"
+# Keep generated .app bundles out of Spotlight and LaunchServices. Otherwise
+# macOS may register this temporary build as a second copy of Skill Palette and
+# use its stale icon for Dock launch/close animations.
+BUILD_DIR="build.noindex"
 APP_DIR="$BUILD_DIR/$APP_NAME.app"
 CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
