@@ -63,6 +63,7 @@ final class PermissionGuideController: NSObject, NSWindowDelegate {
     func show() {
         guard !awaitingSystemSettings else { return }
         refreshPermissionState()
+        NSApp.setActivationPolicy(.regular)
         NSRunningApplication.current.activate(options: [.activateIgnoringOtherApps])
         if !panel.isVisible {
             panel.center()
@@ -100,6 +101,7 @@ final class PermissionGuideController: NSObject, NSWindowDelegate {
 
     func windowWillClose(_ notification: Notification) {
         awaitingSystemSettings = false
+        NSApp.setActivationPolicy(OverlaySettings.shared.showDockIcon ? .regular : .accessory)
     }
 }
 

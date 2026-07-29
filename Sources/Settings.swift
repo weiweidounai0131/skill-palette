@@ -30,14 +30,15 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         // A menu-bar-only app cannot reliably own a focusable settings window
         // on recent macOS releases. Become a regular app while preferences are
         // visible, then return to accessory mode when the window closes.
-        NSApp.setActivationPolicy(.regular)
-        NSRunningApplication.current.activate(options: [.activateIgnoringOtherApps])
+        ApplicationPresentation.prepareForWindowPresentation()
         window?.level = .normal
         showWindow(nil)
         window?.makeKeyAndOrderFront(nil)
     }
 
-    func windowWillClose(_ notification: Notification) {}
+    func windowWillClose(_ notification: Notification) {
+        ApplicationPresentation.applyPreference()
+    }
 }
 
 private enum SettingsDestination: String, CaseIterable, Identifiable {
@@ -140,6 +141,14 @@ struct SettingsView: View {
                 AdvancedAppRulesEditor(
                     isExpanded: $showsAdvancedAppRules,
                     bundleMatchers: $settings.bundleMatchers
+                )
+            }
+
+            SettingsGroup(title: "显示方式", footer: "更改会在关闭设置窗口后生效。") {
+                SettingsToggleRow(
+                    title: "在 Dock 中显示图标",
+                    detail: "关闭后，Skill Palette 仅在菜单栏常驻运行。",
+                    isOn: $settings.showDockIcon
                 )
             }
 

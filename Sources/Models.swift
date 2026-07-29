@@ -49,6 +49,7 @@ final class OverlaySettings: ObservableObject {
     @Published var codexOnly: Bool { didSet { save() } }
     @Published var bundleMatchers: String { didSet { save() } }
     @Published var invocationPrefix: String { didSet { save() } }
+    @Published var showDockIcon: Bool { didSet { save() } }
     @Published var tags: [String: String] { didSet { save() } }
     @Published var favorites: [String] { didSet { save() } }
     @Published var recentNames: [String] { didSet { save() } }
@@ -59,6 +60,7 @@ final class OverlaySettings: ObservableObject {
         static let codexOnly = "codexOnly"
         static let matchers = "matchers"
         static let prefix = "prefix"
+        static let showDockIcon = "showDockIcon"
         static let tags = "tags"
         static let legacyAliases = "aliases"
         static let favorites = "favorites"
@@ -70,6 +72,9 @@ final class OverlaySettings: ObservableObject {
         codexOnly = defaults.object(forKey: Key.codexOnly) as? Bool ?? true
         bundleMatchers = defaults.string(forKey: Key.matchers) ?? "codex,chatgpt"
         invocationPrefix = defaults.string(forKey: Key.prefix) ?? "@"
+        // Skill Palette is primarily a menu-bar utility. Existing installs
+        // can still opt into a Dock icon from Settings at any time.
+        showDockIcon = defaults.object(forKey: Key.showDockIcon) as? Bool ?? false
         tags = defaults.dictionary(forKey: Key.tags) as? [String: String]
             ?? defaults.dictionary(forKey: Key.legacyAliases) as? [String: String]
             ?? [:]
@@ -127,6 +132,7 @@ final class OverlaySettings: ObservableObject {
         defaults.set(codexOnly, forKey: Key.codexOnly)
         defaults.set(bundleMatchers, forKey: Key.matchers)
         defaults.set(invocationPrefix, forKey: Key.prefix)
+        defaults.set(showDockIcon, forKey: Key.showDockIcon)
         defaults.set(tags, forKey: Key.tags)
         defaults.set(favorites, forKey: Key.favorites)
         defaults.set(recentNames, forKey: Key.recents)

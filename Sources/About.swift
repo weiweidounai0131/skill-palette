@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 @MainActor
-final class AboutWindowController: NSWindowController {
+final class AboutWindowController: NSWindowController, NSWindowDelegate {
     init() {
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 342, height: 355),
@@ -21,22 +21,27 @@ final class AboutWindowController: NSWindowController {
         window.miniwindowImage = AppIcon.current
         window.contentView = NSHostingView(rootView: AboutSkillPaletteView())
         super.init(window: window)
+        window.delegate = self
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     func show() {
-        NSApp.setActivationPolicy(.regular)
-        NSRunningApplication.current.activate(options: [.activateIgnoringOtherApps])
+        ApplicationPresentation.prepareForWindowPresentation()
         window?.center()
         showWindow(nil)
         window?.makeKeyAndOrderFront(nil)
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        ApplicationPresentation.applyPreference()
     }
 }
 
 private struct AboutSkillPaletteView: View {
     private let repositoryURL = URL(string: "https://github.com/weiweidounai0131/skill-palette")!
     private let releaseURL = URL(string: "https://github.com/weiweidounai0131/skill-palette/releases/latest")!
+    private let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
 
     var body: some View {
         VStack(spacing: 0) {
@@ -52,7 +57,7 @@ private struct AboutSkillPaletteView: View {
                 .font(.system(size: 20, weight: .semibold))
                 .padding(.top, 13)
 
-            Text("版本 1.1.3")
+            Text("版本 \(version)")
                 .font(.system(size: 13))
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)

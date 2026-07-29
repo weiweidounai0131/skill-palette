@@ -16,6 +16,7 @@
 - 选中后自动插入 `@skill-name` 到原来的 Codex 输入位置。
 - 只读取本机 `~/.codex/skills` 与 `~/.agents/skills` 中的 `SKILL.md`；不会上传你的 Skill 内容或键盘输入。
 - 内置权限引导和诊断页，便于检查辅助功能、输入监控和键盘监听状态。
+- 可选择仅在菜单栏常驻运行，不在 Dock 显示图标。
 
 ### 截图
 
@@ -29,7 +30,7 @@
 
 ### 安装
 
-1. 在 [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest) 下载最新版 `Skill-Palette-1.1.5-macos.zip`。
+1. 在 [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest) 下载最新版 `Skill-Palette-1.1.6-macos.zip`。
 2. 解压后将 `Skill Palette.app` 拖入“应用程序”或任意本地文件夹。
 3. 首次启动时按引导开启两项 macOS 权限：
    - **辅助功能**：将选中的 Skill 插回 Codex 输入框。
@@ -50,6 +51,7 @@ open "build.noindex/Skill Palette.app"
 - 默认触发符为 `#`，避免与 Codex 原生的 `@` 菜单冲突。
 - 按 `Esc` 取消搜索时，原先输入的触发字符会保留在 Codex 输入框中。
 - 默认只在应用名称或 Bundle ID 含 `codex` / `chatgpt` 时启用；可在“通用”页调整。
+- 在“通用 → 显示方式”中可决定是否在 Dock 显示图标；默认仅在菜单栏常驻。
 
 ## English
 
@@ -63,6 +65,7 @@ open "build.noindex/Skill Palette.app"
 - Insert `@skill-name` directly into the original Codex input field.
 - Reads only local `SKILL.md` files from `~/.codex/skills` and `~/.agents/skills`. No Skill content or keystrokes are uploaded.
 - Includes guided macOS permission setup and a diagnostics page for Accessibility, Input Monitoring, and the keyboard listener.
+- Can run as a menu-bar-only utility without a Dock icon.
 
 ### Screenshots
 
@@ -76,7 +79,7 @@ open "build.noindex/Skill Palette.app"
 
 ### Install
 
-1. Download `Skill-Palette-1.1.5-macos.zip` from [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest).
+1. Download `Skill-Palette-1.1.6-macos.zip` from [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest).
 2. Unzip it and move `Skill Palette.app` to Applications or another local folder.
 3. On first launch, grant both macOS permissions:
    - **Accessibility** — inserts the selected Skill into Codex.
@@ -97,6 +100,7 @@ open "build.noindex/Skill Palette.app"
 - `#` is the default trigger to avoid conflicting with Codex's native `@` menu.
 - Press `Esc` to dismiss the search palette and keep the trigger character in the Codex composer.
 - By default, the trigger is limited to apps whose name or bundle identifier includes `codex` or `chatgpt`. You can change that in General settings.
+- Choose whether to show a Dock icon in General → Appearance; by default, Skill Palette stays in the menu bar only.
 
 ## Privacy
 

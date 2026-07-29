@@ -39,6 +39,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
             PermissionGuide.resumePendingGuideAfterLaunchIfNeeded()
         }
+        ApplicationPresentation.applyPreference()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -162,5 +163,17 @@ enum AppIcon {
     static var current: NSImage? {
         guard let url = Bundle.main.url(forResource: "AppIcon", withExtension: "icns") else { return nil }
         return NSImage(contentsOf: url)
+    }
+}
+
+@MainActor
+enum ApplicationPresentation {
+    static func prepareForWindowPresentation() {
+        NSApp.setActivationPolicy(.regular)
+        NSRunningApplication.current.activate(options: [.activateIgnoringOtherApps])
+    }
+
+    static func applyPreference() {
+        NSApp.setActivationPolicy(OverlaySettings.shared.showDockIcon ? .regular : .accessory)
     }
 }
