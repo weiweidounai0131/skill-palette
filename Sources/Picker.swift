@@ -271,45 +271,54 @@ struct SkillPickerView: View {
                 // which feels like locating an old row rather than showing the
                 // new query result. A dedicated result scroller starts each
                 // query at the first matching row instead.
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(Array(results.enumerated()), id: \.element.id) { offset, skill in
-                            Button {
-                                onChoose(skill)
-                            } label: {
-                                HStack(alignment: .top, spacing: 10) {
-                                    Image(systemName: OverlaySettings.shared.isFavorite(skill) ? "star.fill" : "wand.and.stars")
-                                        .foregroundStyle(OverlaySettings.shared.isFavorite(skill) ? Color.yellow : Color.accentColor)
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        Text(skill.displayName).font(.headline)
-                                        if !skill.description.isEmpty {
-                                            Text(skill.description).font(.caption).foregroundStyle(.secondary).lineLimit(2)
+                ScrollViewReader { scrollProxy in
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(Array(results.enumerated()), id: \.element.id) { offset, skill in
+                                Button {
+                                    onChoose(skill)
+                                } label: {
+                                    HStack(alignment: .top, spacing: 10) {
+                                        Image(systemName: OverlaySettings.shared.isFavorite(skill) ? "star.fill" : "wand.and.stars")
+                                            .foregroundStyle(OverlaySettings.shared.isFavorite(skill) ? Color.yellow : Color.accentColor)
+                                        VStack(alignment: .leading, spacing: 3) {
+                                            Text(skill.displayName).font(.headline)
+                                            if !skill.description.isEmpty {
+                                                Text(skill.description).font(.caption).foregroundStyle(.secondary).lineLimit(2)
+                                            }
+                                            if skill.category != "其他" {
+                                                Label(skill.category, systemImage: "folder")
+                                                    .font(.caption2)
+                                                    .foregroundStyle(.secondary)
+                                            }
                                         }
-                                        if skill.category != "其他" {
-                                            Label(skill.category, systemImage: "folder")
-                                                .font(.caption2)
-                                                .foregroundStyle(.secondary)
-                                        }
+                                        Spacer()
+                                        if offset == state.selection { Text("↵").foregroundStyle(.secondary) }
                                     }
-                                    Spacer()
-                                    if offset == state.selection { Text("↵").foregroundStyle(.secondary) }
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 9)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(offset == state.selection ? Color.accentColor.opacity(0.12) : Color.clear)
+                                    .contentShape(Rectangle())
                                 }
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 9)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(offset == state.selection ? Color.accentColor.opacity(0.12) : Color.clear)
-                                .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityLabel("选择 \(skill.displayName)")
+                                .buttonStyle(.plain)
+                                .accessibilityLabel("选择 \(skill.displayName)")
+                                .id(skill.id)
 
-                            if offset < results.count - 1 {
-                                Divider().padding(.leading, 45)
+                                if offset < results.count - 1 {
+                                    Divider().padding(.leading, 45)
+                                }
                             }
                         }
                     }
+                    .id(state.query)
+                    .onChange(of: state.selection) { selection in
+                        guard results.indices.contains(selection) else { return }
+                        withAnimation(.easeOut(duration: 0.12)) {
+                            scrollProxy.scrollTo(results[selection].id, anchor: .center)
+                        }
+                    }
                 }
-                .id(state.query)
             }
 
             Divider()
