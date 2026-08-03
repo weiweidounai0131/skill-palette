@@ -10,6 +10,17 @@ final class InputInterceptor {
     private init() {}
 
     func start() {
+        start(showPermissionGuide: true)
+    }
+
+    /// macOS can invalidate a session event tap while the Mac is asleep. Do
+    /// not show onboarding during a normal wake-up, because transient privacy
+    /// state while the desktop is being restored must not interrupt the user.
+    func resumeAfterWake() {
+        restart(showPermissionGuide: false)
+    }
+
+    private func start(showPermissionGuide: Bool) {
         RuntimeStatus.shared.refreshPermissions()
         // The overlay needs both permissions as a single capability: input
         // monitoring observes the trigger, and Accessibility returns focus
@@ -19,7 +30,9 @@ final class InputInterceptor {
         guard RuntimeStatus.shared.inputMonitoringGranted,
               RuntimeStatus.shared.accessibilityGranted else {
             RuntimeStatus.shared.setEventTapRunning(false)
-            DispatchQueue.main.async { PermissionGuide.show(requestAccessibility: false) }
+            if showPermissionGuide {
+                DispatchQueue.main.async { PermissionGuide.show(requestAccessibility: false) }
+            }
             return
         }
         let mask = CGEventMask(1 << CGEventType.keyDown.rawValue)
@@ -52,7 +65,9 @@ final class InputInterceptor {
             userInfo: nil
         ) else {
             RuntimeStatus.shared.setEventTapRunning(false)
-            DispatchQueue.main.async { PermissionGuide.show(requestAccessibility: false) }
+            if showPermissionGuide {
+                DispatchQueue.main.async { PermissionGuide.show(requestAccessibility: false) }
+            }
             return
         }
 
@@ -65,13 +80,17 @@ final class InputInterceptor {
     }
 
     func restart() {
+        restart(showPermissionGuide: true)
+    }
+
+    private func restart(showPermissionGuide: Bool) {
         if let source {
             CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
         }
         eventTap = nil
         source = nil
         RuntimeStatus.shared.setEventTapRunning(false)
-        start()
+        start(showPermissionGuide: showPermissionGuide)
     }
 
     private func shouldOpenPicker(for character: String) -> Bool {
@@ -124,6 +143,13 @@ enum TextInsertion {
     static func insert(_ text: String, into element: AXUIElement?) -> Bool {
         guard let element else { return false }
         return AXUIElementSetAttributeValue(element, kAXSelectedTextAttribute as CFString, text as CFTypeRef) == .success
+    }
+
+    static func belongs(_ element: AXUIElement?, to application: NSRunningApplication?) -> Bool {
+        guard let element, let application else { return false }
+        var processIdentifier: pid_t = 0
+        guard AXUIElementGetPid(element, &processIdentifier) == .success else { return false }
+        return processIdentifier == application.processIdentifier
     }
 
     static func paste(_ text: String, into application: NSRunningApplication?) {

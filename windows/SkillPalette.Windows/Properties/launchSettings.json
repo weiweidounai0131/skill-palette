@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SkillPalette.Windows (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "SkillPalette.Windows (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

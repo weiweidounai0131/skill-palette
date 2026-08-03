@@ -14,6 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private let settingsWindow = SettingsWindowController()
     private let aboutWindow = AboutWindowController()
+    private var wakeObserver: NSObjectProtocol?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Keep the menu-bar entry, and also behave like a regular macOS app so
@@ -33,6 +34,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // SwiftUI was still constructing the picker.
         _ = PickerController.shared
         InputInterceptor.shared.start()
+        // A session event tap and Electron's accessibility tree can both be
+        // invalidated while the Mac is asleep. Recreate the tap shortly after
+        // wake, once the desktop and privacy services have resumed.
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                InputInterceptor.shared.resumeAfterWake()
+            }
+        }
         // If macOS required a restart while permissions were being granted,
         // restore the unfinished guide so the user can see the completed
         // status and explicitly continue into the app.
@@ -40,6 +53,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             PermissionGuide.resumePendingGuideAfterLaunchIfNeeded()
         }
         ApplicationPresentation.applyPreference()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        if let wakeObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver)
+        }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

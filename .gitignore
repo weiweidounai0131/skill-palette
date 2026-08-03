@@ -3,3 +3,18 @@ build/
 build.noindex/
 *.app.zip
 *.zip
+
+# Windows build output and local IDE state
+**/bin/
+**/obj/
+**/publish/
+*.exe
+*.pdb
+*.msix
+*.msixbundle
+.vs/
+*.user
+*.suo
+*.userosscache
+*.tmp
+windows/SkillPalette.Windows.Spike/

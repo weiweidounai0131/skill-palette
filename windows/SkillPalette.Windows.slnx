@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SkillPalette.Core/SkillPalette.Core.csproj" />
+  <Project Path="SkillPalette.Windows/SkillPalette.Windows.csproj" />
+</Solution>

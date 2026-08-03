@@ -76,33 +76,74 @@ final class PickerController: NSWindowController, NSWindowDelegate {
     private func choose(_ skill: Skill) {
         let text = OverlaySettings.shared.renderedInvocation(for: skill)
         OverlaySettings.shared.recordUse(skill)
-        closePicker()
-
-        // Wait until the floating picker has resigned focus before updating the
-        // original AX text element. This avoids putting text in the picker.
-        let target = targetElement
-        let application = targetApplication
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-            application?.activate(options: [.activateIgnoringOtherApps])
-            if !TextInsertion.insert(text, into: target) {
-                TextInsertion.paste(text, into: application)
-            }
-        }
+        deliver(text, outcome: "已插入 Skill")
     }
 
     private func cancel() {
-        let target = targetElement
-        let application = targetApplication
         let trigger = triggerCharacter
-        closePicker()
         // The trigger key was intercepted in order to open the picker. Escape
         // means the user chose not to search, so restore that exact character
         // to the original Codex editor instead of silently discarding it.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-            application?.activate(options: [.activateIgnoringOtherApps])
-            if !TextInsertion.insert(trigger, into: target) {
-                TextInsertion.paste(trigger, into: application)
+        deliver(trigger, outcome: "已保留触发符")
+    }
+
+    /// Waking a Mac can leave Electron's Accessibility tree temporarily stale.
+    /// Wait for Codex to become active, fetch a fresh focused element, and use
+    /// the clipboard fallback only when direct Accessibility insertion is not
+    /// genuinely available.
+    private func deliver(_ text: String, outcome: String) {
+        let capturedTarget = targetElement
+        let application = targetApplication
+        closePicker()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.16) { [weak self] in
+            self?.restoreFocusAndDeliver(
+                text,
+                outcome: outcome,
+                capturedTarget: capturedTarget,
+                application: application,
+                remainingAttempts: 4
+            )
+        }
+    }
+
+    private func restoreFocusAndDeliver(
+        _ text: String,
+        outcome: String,
+        capturedTarget: AXUIElement?,
+        application: NSRunningApplication?,
+        remainingAttempts: Int
+    ) {
+        guard let application else {
+            RuntimeStatus.shared.recordTrigger(outcome: "未能找到 Codex，未写入内容")
+            return
+        }
+
+        application.activate(options: [.activateIgnoringOtherApps])
+        guard application.isActive || remainingAttempts == 0 else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { [weak self] in
+                self?.restoreFocusAndDeliver(
+                    text,
+                    outcome: outcome,
+                    capturedTarget: capturedTarget,
+                    application: application,
+                    remainingAttempts: remainingAttempts - 1
+                )
             }
+            return
+        }
+
+        // Prefer a post-activation lookup. Keep the pre-picker element only as
+        // a second choice, and only while it still belongs to Codex.
+        let freshTarget = FocusedElement.current()
+        let target = TextInsertion.belongs(freshTarget, to: application) ? freshTarget
+            : (TextInsertion.belongs(capturedTarget, to: application) ? capturedTarget : nil)
+
+        if TextInsertion.insert(text, into: target) {
+            RuntimeStatus.shared.recordTrigger(outcome: "\(outcome)（辅助功能）")
+        } else {
+            TextInsertion.paste(text, into: application)
+            RuntimeStatus.shared.recordTrigger(outcome: "\(outcome)（粘贴回退）")
         }
     }
 
