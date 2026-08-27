@@ -44,9 +44,13 @@ final class PickerController: NSWindowController, NSWindowDelegate {
         pickerState.selection = 0
         pickerState.scope = SkillIndex.shared.availableScopes().contains(.favorites) ? .favorites : .all
         positionPanel(at: NSEvent.mouseLocation)
+        hideOrdinaryAppWindows()
         NSApp.activate(ignoringOtherApps: true)
         showWindow(nil)
         window?.makeKeyAndOrderFront(nil)
+        DispatchQueue.main.async { [weak self] in
+            self?.hideOrdinaryAppWindows()
+        }
         installKeyMonitor()
     }
 
@@ -119,6 +123,11 @@ final class PickerController: NSWindowController, NSWindowDelegate {
             return
         }
 
+        // The picker activates Skill Palette briefly to receive keyboard
+        // navigation. Make sure no settings/about window is allowed to surface
+        // during the handoff back to Codex.
+        hideOrdinaryAppWindows()
+        ApplicationPresentation.applyPreference()
         application.activate(options: [.activateIgnoringOtherApps])
         guard application.isActive || remainingAttempts == 0 else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { [weak self] in
@@ -157,6 +166,19 @@ final class PickerController: NSWindowController, NSWindowDelegate {
             self.keyMonitor = nil
         }
         window?.orderOut(nil)
+        hideOrdinaryAppWindows()
+        ApplicationPresentation.applyPreference()
+        DispatchQueue.main.async { [weak self] in
+            self?.hideOrdinaryAppWindows()
+            ApplicationPresentation.applyPreference()
+        }
+    }
+
+    private func hideOrdinaryAppWindows() {
+        guard let pickerWindow = window else { return }
+        for appWindow in NSApp.windows where appWindow !== pickerWindow && appWindow.isVisible {
+            appWindow.orderOut(nil)
+        }
     }
 
     func windowDidResignKey(_ notification: Notification) {

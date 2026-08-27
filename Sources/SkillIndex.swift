@@ -1,5 +1,10 @@
 import Foundation
 
+struct SkillScanResult {
+    let addedCount: Int
+    let totalCount: Int
+}
+
 final class SkillIndex: ObservableObject {
     static let shared = SkillIndex()
 
@@ -9,7 +14,9 @@ final class SkillIndex: ObservableObject {
 
     private init() {}
 
-    func rescan() {
+    @discardableResult
+    func rescan() -> SkillScanResult {
+        let existingIDs = Set(skills.map(\.id))
         let home = FileManager.default.homeDirectoryForCurrentUser
         let roots = [
             home.appendingPathComponent(".codex/skills"),
@@ -39,6 +46,8 @@ final class SkillIndex: ObservableObject {
             $0.localizedCaseInsensitiveCompare($1) == .orderedAscending
         }
         lastScanMessage = "已索引 \(skills.count) 个 Skill"
+        let addedCount = Set(skills.map(\.id)).subtracting(existingIDs).count
+        return SkillScanResult(addedCount: addedCount, totalCount: skills.count)
     }
 
     func availableScopes() -> [SkillScope] {

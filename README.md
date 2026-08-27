@@ -15,6 +15,7 @@
 - 在 Codex 或 ChatGPT 输入默认 `#` 或自定义触发字符，立即打开本地搜索。
 - 按名称、描述、中文标签进行模糊搜索；支持目录分类、收藏与最近使用。
 - 自动扫描 `~/.codex/skills` / `~/.agents/skills`（Windows 对应 `%USERPROFILE%\\.codex\\skills` / `%USERPROFILE%\\.agents\\skills`）。
+- 点击重新扫描后显示本次新增 Skill 数量和当前索引总数。
 - 选中后写回 `@skill-name`；按 `Esc` 取消时保留原触发字符。
 - 默认只在目标应用名称或标识包含 `codex` / `chatgpt` 时启用，可自行修改规则。
 - 本地隐私设计：不上传 Skills、搜索词或按键内容。
@@ -86,6 +87,7 @@ Skill content, search terms, and keystrokes stay on the device.
 - Open local Skill search from Codex or ChatGPT with `#` or a custom trigger character.
 - Fuzzy search by name, description, Chinese tags, and folder; browse categories, favorites, and recents.
 - Scans `~/.codex/skills` and `~/.agents/skills` on macOS, or `%USERPROFILE%\\.codex\\skills` and `%USERPROFILE%\\.agents\\skills` on Windows.
+- After a rescan, shows how many Skills were added and the current total index count.
 - Insert `@skill-name` into the original prompt. Press `Esc` to close the palette and keep the trigger character.
 - Restricts triggering to processes matching `codex` or `chatgpt` by default; target rules are configurable.
 - Local-first: no Skill content, search terms, or keystrokes are uploaded.

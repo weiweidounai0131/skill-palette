@@ -146,7 +146,11 @@ public sealed partial class MainPage : Page
 
     private void OnUnloaded(object sender, RoutedEventArgs e) => _listener.Dispose();
 
-    private async void RescanButton_Click(object sender, RoutedEventArgs e) => await ScanAsync();
+    private async void RescanButton_Click(object sender, RoutedEventArgs e)
+    {
+        var addedCount = await ScanAsync();
+        await ShowScanResultAsync(addedCount);
+    }
 
     internal void NavigateTo(string page)
     {
@@ -193,13 +197,21 @@ public sealed partial class MainPage : Page
 
     internal async Task RescanFromTrayAsync()
     {
-        await ScanAsync();
+        var addedCount = await ScanAsync();
+        await ShowScanResultAsync(addedCount);
+    }
+
+    private async Task ShowScanResultAsync(int? addedCount)
+    {
+        var content = addedCount is int count
+            ? $"本次新增 {count} 个 Skill。\n当前共索引 {_snapshot?.Skills.Count ?? 0} 个 Skill。"
+            : $"{ScanStatus.Title}\n{ScanStatus.Message}";
 
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
-            Title = "扫描结果",
-            Content = $"{ScanStatus.Title}\n{ScanStatus.Message}",
+            Title = "扫描完成",
+            Content = content,
             CloseButtonText = "关闭",
             DefaultButton = ContentDialogButton.Close,
         };
@@ -446,8 +458,13 @@ public sealed partial class MainPage : Page
         selected.FavoriteAutomationName = metadata.IsFavorite ? $"取消收藏 {selected.Name}" : $"收藏 {selected.Name}";
     }
 
-    private async Task ScanAsync()
+    private async Task<int?> ScanAsync()
     {
+        var previousIds = _snapshot?.Skills
+            .Select(skill => skill.Id)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase)
+            ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         ScanStatus.Severity = InfoBarSeverity.Informational;
         ScanStatus.Title = "正在扫描";
         ScanStatus.Message = "只读取每个 SKILL.md 的有限前缀；不会上传 Skill 内容。";
@@ -460,13 +477,16 @@ public sealed partial class MainPage : Page
             RenderResults();
             ScanStatus.Severity = snapshot.Warnings.Count == 0 ? InfoBarSeverity.Success : InfoBarSeverity.Warning;
             ScanStatus.Title = snapshot.Warnings.Count == 0 ? "扫描完成" : "扫描完成，但有可诊断警告";
-            ScanStatus.Message = $"已索引 {Skills.Count} 个 Skill；扫描警告 {snapshot.Warnings.Count} 条。";
+            var addedCount = snapshot.Skills.Count(skill => !previousIds.Contains(skill.Id));
+            ScanStatus.Message = $"本次新增 {addedCount} 个 Skill；已索引 {snapshot.Skills.Count} 个 Skill；扫描警告 {snapshot.Warnings.Count} 条。";
+            return addedCount;
         }
         catch (Exception ex)
         {
             ScanStatus.Severity = InfoBarSeverity.Error;
             ScanStatus.Title = "扫描失败";
             ScanStatus.Message = ex.Message;
+            return null;
         }
     }
 

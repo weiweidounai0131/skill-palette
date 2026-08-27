@@ -180,7 +180,8 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
                 Spacer()
                 Button {
-                    index.rescan()
+                    let result = index.rescan()
+                    SkillScanFeedback.present(result, attachedTo: NSApp.keyWindow)
                 } label: {
                     Label("重新扫描", systemImage: "arrow.clockwise")
                 }

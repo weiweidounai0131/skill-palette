@@ -17,9 +17,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var wakeObserver: NSObjectProtocol?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Keep the menu-bar entry, and also behave like a regular macOS app so
-        // the current artwork is represented consistently in the Dock.
-        NSApp.setActivationPolicy(.regular)
+        // The bundle starts as an accessory app, so a login-item launch never
+        // creates a Dock entry before user preferences have loaded. The user
+        // can still opt into a regular Dock app with the display preference.
+        NSApp.setActivationPolicy(.accessory)
         // NSAlert otherwise asks AppKit for the cached application icon on the
         // first launch. Load the bundled icon explicitly so permission prompts
         // always use the current Skill Palette artwork.
@@ -52,7 +53,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
             PermissionGuide.resumePendingGuideAfterLaunchIfNeeded()
         }
-        ApplicationPresentation.applyPreference()
+        // AppKit may finish classifying a newly launched app as foreground
+        // only after this delegate callback returns. Apply the user's Dock
+        // preference on the next main-loop turn, otherwise a login launch can
+        // leave a stale Dock tile even though the preference is disabled.
+        DispatchQueue.main.async {
+            ApplicationPresentation.applyPreference()
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -63,6 +70,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        // If the user has explicitly chosen to show a Dock icon, clicking that
+        // icon should reveal a useful window instead of activating an app with
+        // no visible content.
+        if !flag, OverlaySettings.shared.showDockIcon {
+            settingsWindow.show()
+        }
+        return true
     }
 
     private func configureStatusItem() {
@@ -112,7 +129,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func rescan() {
-        SkillIndex.shared.rescan()
+        let result = SkillIndex.shared.rescan()
+        SkillScanFeedback.present(result)
     }
 
     @objc private func checkPermissions() {
@@ -121,6 +139,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func quit() {
         NSApp.terminate(nil)
+    }
+}
+
+@MainActor
+enum SkillScanFeedback {
+    static func present(_ result: SkillScanResult, attachedTo parent: NSWindow? = nil) {
+        let alert = NSAlert()
+        alert.messageText = "扫描完成"
+        if result.addedCount == 0 {
+            alert.informativeText = "本次没有发现新增 Skill。\n当前共索引 \(result.totalCount) 个 Skill。"
+        } else {
+            alert.informativeText = "本次新增 \(result.addedCount) 个 Skill。\n当前共索引 \(result.totalCount) 个 Skill。"
+        }
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "好的")
+
+        if let parent, parent.isVisible {
+            alert.beginSheetModal(for: parent)
+        } else {
+            let policy = NSApp.activationPolicy()
+            NSApp.activate(ignoringOtherApps: true)
+            alert.runModal()
+            if policy == .accessory {
+                NSApp.setActivationPolicy(.accessory)
+            }
+        }
     }
 }
 
