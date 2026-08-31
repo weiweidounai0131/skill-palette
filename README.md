@@ -24,7 +24,7 @@
 
 ### 下载与安装
 
-请在 [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest) 下载最新版。
+请优先在 [GitCode Releases](https://gitcode.com/gcw_mHRylKw0/skill-palette/releases) 下载最新版；如果 GitCode 暂时不可用，也可以访问 [GitHub Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest)。
 
 | 平台 | 文件 | 要求 | 安装方式 |
 | --- | --- | --- | --- |
@@ -96,7 +96,7 @@ Skill content, search terms, and keystrokes stay on the device.
 
 ### Download and install
 
-Download the latest release from [Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest).
+Download the latest release from [GitCode Releases](https://gitcode.com/gcw_mHRylKw0/skill-palette/releases); if GitCode is temporarily unavailable, use [GitHub Releases](https://github.com/weiweidounai0131/skill-palette/releases/latest).
 
 | Platform | Asset | Requirement | Installation |
 | --- | --- | --- | --- |
